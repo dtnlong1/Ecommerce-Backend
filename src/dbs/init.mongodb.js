@@ -14,9 +14,12 @@ class Database {
 			mongoose.set("debug", { color: true });
 		}
 		mongoose
-			.connect(process.env.MONG_URI, {
-				maxPoolSize: 50,
-			})
+			.connect(
+				"mongodb+srv://dautrannhatlong:Long04072013!@cluster0.tcpf3jw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+				{
+					maxPoolSize: 50,
+				}
+			)
 			.then((_) => console.log(`Connected to database`))
 			.catch((err) => console.log(`Error: ${err}`));
 	}

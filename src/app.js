@@ -19,7 +19,7 @@ app.use(
 // init db
 require("./dbs/init.mongodb");
 // init routes
-app.use("/", require("./routes"));
+app.use("/", require("./routes/access/index"));
 // handling error
 
 module.exports = app;
