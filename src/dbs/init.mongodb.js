@@ -1,6 +1,8 @@
 "use strict";
 
 const mongoose = require("mongoose");
+import dotenv from "dotenv";
+dotenv.config();
 
 class Database {
 	constructor() {
@@ -14,7 +16,7 @@ class Database {
 			mongoose.set("debug", { color: true });
 		}
 		mongoose
-			.connect(process.env.MONG_URI, {
+			.connect(process.env.MONGO_URI, {
 				maxPoolSize: 50,
 			})
 			.then((_) => console.log(`Connected to database`))

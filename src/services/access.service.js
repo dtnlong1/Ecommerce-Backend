@@ -6,6 +6,10 @@ const crypto = require("crypto");
 const KeyTokenService = require("./keyToken.service");
 const createTokenPair = require("../auth/authUtils");
 const { getInforData } = require("../utils");
+const {
+	BadRequestError,
+	ConflictRequestError,
+} = require("../core/error.response");
 
 const ShopRoles = {
 	SHOP: "SHOP",
@@ -20,10 +24,7 @@ class AccessService {
 			// check if email exists
 			const holderShop = await shopModel.findOne({ email }).lean();
 			if (holderShop) {
-				return {
-					code: "xxxx",
-					message: "Shop already registered!",
-				};
+				throw new BadRequestError("Error: Shop already registered!");
 			}
 
 			const passwordHash = bcrypt.hash(passsword, 10);
@@ -47,30 +48,26 @@ class AccessService {
 				// 		format: "pem",
 				// 	},
 				// });
-				const privateKey = crypto.getRandomValues(64).toString("hex");
-				const publicKey = crypto.getRandomValues(64).toString("hex");
+				const privateKey = crypto.randomBytes(64).toString("hex");
+				const publicKey = crypto.randomBytes(64).toString("hex");
 
 				console.log({ privateKey, publicKey });
 
-				const publicKeyString = await KeyTokenService.createKeyToken({
+				const keyStore = await KeyTokenService.createKeyToken({
 					userId: newShop._id,
 					publicKey,
+					privateKey,
 				});
 
-				if (!publicKeyString) {
-					return {
-						code: "xxxx",
-						message: "publicKeyString error",
-					};
+				if (!keyStore) {
+					throw new BadRequestError("Error: Shop already registered!");
 				}
-
-				const publicKeyObject = crypto.createPublicKey(publicKeyString);
 			}
 
 			// create token pair
 			const tokens = await createTokenPair(
 				{ userId: newShop._id, email },
-				publicKeyString,
+				publicKey,
 				privateKey
 			);
 			console.log(`Create Token Success::`, tokens);
