@@ -1,9 +1,9 @@
-"use strict";
+'use strict'
 
-import { model, Schema } from "mongoose";
+const { model, Schema } = require('mongoose')
 
-const DOCUMENT_NAME = "Apikey";
-const COLLECTION_NAME = "Apikeys";
+const DOCUMENT_NAME = 'Apikey'
+const COLLECTION_NAME = 'Apikeys'
 
 const ApiKey = new Schema(
 	{
@@ -19,10 +19,10 @@ const ApiKey = new Schema(
 		permissions: {
 			type: [String],
 			required: true,
-			enum: ["0000", "1111", "2222"],
+			enum: ['0000', '1111', '2222'],
 		},
 	},
 	{ timestamps: true, collection: COLLECTION_NAME }
-);
+)
 
-module.exports = model(DOCUMENT_NAME, ApiKey);
+module.exports = model(DOCUMENT_NAME, ApiKey)
