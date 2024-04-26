@@ -1,16 +1,16 @@
-"use strict";
+'use strict'
 
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose')
 
-const DOC_NAME = "Key";
-const COLLECTION_NAME = "Keys";
+const DOC_NAME = 'Key'
+const COLLECTION_NAME = 'Keys'
 
 var keyTokenSchema = new Schema(
 	{
 		user: {
 			type: Schema.Types.ObjectId,
 			required: true,
-			ref: "Shop",
+			ref: 'Shop',
 		},
 		privateKey: {
 			type: String,
@@ -20,15 +20,19 @@ var keyTokenSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		refreshToken: {
+		refreshTokensUsed: {
 			type: Array,
 			default: [],
+		},
+		refreshToken: {
+			type: String,
+			required: true,
 		},
 	},
 	{
 		collection: COLLECTION_NAME,
 		timestamps: true,
 	}
-);
+)
 
-module.exports = model(DOC_NAME, keyTokenSchema);
+module.exports = model(DOC_NAME, keyTokenSchema)
