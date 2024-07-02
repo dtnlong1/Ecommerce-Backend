@@ -21,6 +21,12 @@ const ShopRoles = {
 }
 
 class AccessService {
+
+	static logout = async (keyStore) => {
+		return delKey = await KeyTokenService.removeById(keyStore._id)
+	}
+
+
 	/*
 	1 - check email in dbs
 	2 - match password
@@ -32,7 +38,7 @@ class AccessService {
 		const foundShop = await findByEmail({ email })
 		if (!foundShop) throw new BadRequestError('Shop not registered!')
 
-		const match = bcrypt.compate(password, foundShop.passsword)
+		const match = bcrypt.compare(password, foundShop.passsword)
 		if (!match) throw new AuthFailureError('Authentication error')
 
 		const privateKey = crypto.randomBytes(64).toString('hex')
@@ -126,7 +132,7 @@ class AccessService {
 			}
 		} catch (error) {
 			return {
-				code: 'xxxx',
+				code: 500,
 				message: error.message,
 				status: 'error',
 			}
