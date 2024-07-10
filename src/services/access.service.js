@@ -6,7 +6,8 @@ const crypto = require('crypto')
 const KeyTokenService = require("./keyToken.service")
 const createTokenPair = require("../auth/authUtils")
 const { getInforData } = require("../utils")
-const {BadRequestError, ConflictRequestError} = require('../core/error.response')
+const {BadRequestError, ConflictRequestError, AuthFailureError} = require('../core/error.response')
+const {findByEmail} = require('../services/shop.service')
 const ShopRoles = {
 	SHOP: 'SHOP',
 	WRITER: 'WRITER',
@@ -14,8 +15,34 @@ const ShopRoles = {
 	ADMIN: 'ADMIN',
 }
 class AccessService {
+
+    static logIn = async ({email, password, refreshToken}) => {
+        // 1. check if shop exists
+        const foundShop = await findByEmail({email})
+        if(!foundShop) {
+            throw new BadRequestError('Shop not registered')
+        }
+        // 2. check password
+        const match = await bcrypt.compare(password, foundShop.password)
+		if (!match) {
+            throw new AuthFailureError('Authentication error')}
+        // 3. create privateKey, publicKey
+        const privateKey = crypto.randomBytes(64).toString('hex')
+        const publicKey = crypto.randomBytes(64).toString('hex')
+        // 4. generate tokens
+        const tokens = await createTokenPair({userId: foundShop._id, email}, publicKey, privateKey)
+
+        await KeyTokenService.createKeyToken({
+            refreshToken: tokens.refreshToken,
+            privateKey, publicKey, userId: foundShop._id
+        })
+        return {
+            shop: getInforData({fields: ['_id', 'name', 'email'], object: foundShop}),
+                tokens
+        }
+    }
+
     static signUp = async ({name, email, password}) => {
-        // try {
             const holderShop = await shopModel.findOne({email}).lean()
             if(holderShop) {
                 throw new BadRequestError('Error: Shop already registered!')
@@ -61,13 +88,6 @@ class AccessService {
                     tokens
                 }
             }
-        // } catch (error) {
-        //     console.error(error)
-        //     return {
-        //         message: error.message,
-        //         status: 'error'
-        //     }
-        // }
     }
 }
 
