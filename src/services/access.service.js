@@ -4,7 +4,7 @@ const shopModel = require("../models/shop.model")
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const KeyTokenService = require("./keyToken.service")
-const createTokenPair = require("../auth/authUtils")
+const {createTokenPair} = require("../auth/authUtils")
 const { getInforData } = require("../utils")
 const {BadRequestError, ConflictRequestError, AuthFailureError} = require('../core/error.response')
 const {findByEmail} = require('../services/shop.service')
@@ -15,6 +15,12 @@ const ShopRoles = {
 	ADMIN: 'ADMIN',
 }
 class AccessService {
+
+    static logOut = async(keyStore) => {
+        const delKey = await KeyTokenService.removeKeyById(keyStore._id)
+        console.log({delKey})
+        return delKey
+    }
 
     static logIn = async ({email, password, refreshToken}) => {
         // 1. check if shop exists
