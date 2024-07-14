@@ -7,11 +7,8 @@ const { authentication, authenticationV2 } = require('../../auth/authUtils')
 
 const router = express.Router()
 
-
-// authentication
 router.use(authenticationV2)
 
-//logOut
 router.post('', asyncHandler(productController.createProduct))
 
 module.exports = router
