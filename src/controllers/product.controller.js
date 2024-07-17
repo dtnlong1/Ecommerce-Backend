@@ -48,6 +48,12 @@ class ProductController{
             metadata: await ProductServiceV2.searchProduct(req.params)
         }).send(res)
     }
+    getAllProducts = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Get all products success', 
+            metadata: await ProductServiceV2.findAllProducts(req.query)
+        }).send(res)
+    }
 }
 
 
