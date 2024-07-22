@@ -9,6 +9,9 @@ const getInforData = ({ fields = [], object = {} }) => {
 const getSelectData = (select = []) => {
 	return Object.fromEntries(select.map(el => [el, 1]))
 }
+const getUnSelectData = (select = []) => {
+	return Object.fromEntries(select.map(el => [el, 0]))
+}
 
 const removeUndefinedObject = obj => {
 	Object.keys(obj).forEach(k => {
@@ -39,5 +42,6 @@ module.exports = {
 	getInforData,
 	getSelectData, 
 	removeUndefinedObject,
-	updateNestedObjectParser
+	updateNestedObjectParser,
+	getUnSelectData
 };
