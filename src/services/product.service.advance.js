@@ -3,6 +3,8 @@
 const {product, clothing, electronics, furniture} = require('../models/product.model')
 const {BadRequestError} = require('../core/error.response')
 const { findAllDraftsForShop, publishProductByShop, findAllPublishForShop, searchProductByUser, findAllProducts } = require('../models/repositories/product.repo')
+const { insertInventory } = require('../models/repositories/inventory.repo')
+const {pushNotiToSystem} = require('./notification.service')
 
 // define Factory class to create product
 
@@ -71,7 +73,23 @@ class Product {
     
     //create new product
     async createProduct(product_id){
-        return await product.create({...this, _id: product_id})
+        const newProduct = await product.create({...this, _id: product_id})
+        if (newProduct) {
+            // add product_stock to inventory collection
+            await insertInventory({product_id: newProduct._id, shop_id: this.product_shop, stock: this.product_quantity })
+            // push notification to system
+            pushNotiToSystem({
+                type: 'SHOP-001',
+                receiverId: 1,
+                senderId: this.product_shop,
+                options: {
+                    product_name: this.product_name,
+                    shop_name: this.product_shop
+                }
+            }).then(rs => console.log(rs))
+            .catch(console.error)
+        }
+        return newProduct
     }
 }
 
