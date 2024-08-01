@@ -1,5 +1,5 @@
 const amqp = require('amqplib')
-const message = 'hello rabbitmq'
+const message = 'new product: title abx'
 
 const runProducer = async () => {
     try {
@@ -13,6 +13,11 @@ const runProducer = async () => {
 
         //send messages to consumer
         channel.sendToQueue(queueName, Buffer.from(message))
+        console.log('message sent')
+        setTimeout(() => {
+            connection.close()
+            process.exit(0)
+        }, 500)
 
     } catch (error) {
         console.error(error)
